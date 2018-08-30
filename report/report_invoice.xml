@@ -75,7 +75,7 @@
                     <thead>
                         <tr>
                             <th class="hidden">Documento origen</th>
-                            <th class="text-center">CÓDIGO</th>
+                            <th class="text-left">CÓDIGO</th>
                             <th class="text-left">DESCRIPCIÓN</th>
                             <th class="text-center">CANTIDAD</th>
                             <th class="text-center" t-if="display_discount">DESC.(%)</th>
@@ -92,7 +92,7 @@
                             <td class="hidden">
                                 <span t-field="l.origin"/>
                             </td>
-                            <td class="text-center" name="product_code">
+                            <td class="text-left" name="product_code">
                                 <span t-field="l.product_id.name"/>
                             </td>
                             <td class="text-left" name="product_name">
