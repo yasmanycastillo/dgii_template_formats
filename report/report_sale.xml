@@ -10,11 +10,11 @@
                     </div>
                     <div t-if="doc.date_order and doc.state in ['draft','sent']">
                       <strong>Fecha del presupuesto:</strong>
-                      <p t-field="doc.date_order"/>
+                      <span t-field="doc.date_order"/>
                     </div>
                     <div t-if="doc.validity_date and doc.state in ['draft', 'sent']">
                       <strong>Fecha de caducidad:</strong>
-                      <p t-field="doc.validity_date"/>
+                      <span t-field="doc.validity_date"/>
                     </div>
                     <div t-if="doc.user_id">
                       <strong>Vendedor: </strong><span t-field="doc.user_id"/>
@@ -27,7 +27,7 @@
                       <span t-field="doc.client_order_ref"/>
                     </div>
                 </div>
-                <div class="col-xs-6 pull-right">
+                <div class="col-xs-6 pull-left">
                     <h2 class="mt0 text-left" style="top:0px !important;">
                         <strong>
                             <t t-if="not (env.context.get('proforma', False) or is_pro_forma)">
