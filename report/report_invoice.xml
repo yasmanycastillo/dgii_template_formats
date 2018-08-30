@@ -76,8 +76,8 @@
                         <tr>
                             <th class="hidden">Documento origen</th>
                             <th class="text-center">CÓDIGO</th>
-                            <th class="text-center">CANTIDAD</th>
                             <th class="text-left">DESCRIPCIÓN</th>
+                            <th class="text-center">CANTIDAD</th>
                             <th class="text-center" t-if="display_discount">DESC.(%)</th>
                             <th class="text-right">ITBIS</th>
                             <th class="text-right">VALOR</th>
