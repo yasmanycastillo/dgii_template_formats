@@ -61,8 +61,8 @@
                 <thead>
                   <tr>
                     <th class="text-left">CÓDIGO</th>
-                    <th class="text-center">CANTIDAD</th>
                     <th class="text-left">DESCRIPCIÓN</th>
+                    <th class="text-center">CANTIDAD</th>
                     <th class="text-right">PRECIO UNITARIO</th>
                     <th class="text-center" t-if="display_discount">DESC.(%)</th>
                     <th class="text-right">ITBIS</th>
@@ -78,11 +78,11 @@
                         <td class="text-left" name="product_code">
                           <span t-field="l.product_id.name"/>
                         </td>
+                        <td class="text-left">
+                            <span t-field="l.name"/>
+                        </td>
                         <td class="text-center">
                           <span t-esc="'{:.2f}'.format(l.product_uom_qty)"/>
-                        </td>
-                        <td class="text-left">
-                          <span t-field="l.name"/>
                         </td>
                         <td class="text-right">
                           <span t-field="l.price_unit" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.pricelist_id.currency_id}"/>
