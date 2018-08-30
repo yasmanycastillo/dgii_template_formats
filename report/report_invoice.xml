@@ -92,14 +92,14 @@
                             <td class="hidden">
                                 <span t-field="l.origin"/>
                             </td>
-                            <td class="text-center">
+                            <td class="text-center" name="product_code">
                                 <span t-field="l.product_id.name"/>
-                            </td>
-                            <td class="text-center">
-                                <span t-field="l.quantity"/>
                             </td>
                             <td class="text-left" name="product_name">
                                 <span t-field="l.name"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-field="l.quantity"/>
                             </td>
                             <td class="text-center" t-if="display_discount">
                                 <span t-field="l.discount"/>
