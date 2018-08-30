@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_dgii_invoice_document" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[hasclass('page')]" position="replace">
+            <div class="row col-lg-12" style="top:0px !important;">
+                <div class="col-xs-5" name="company_address">
+                    <div t-if="o.shop_id">
+                      Sucursal: <span t-field="o.shop_id.branch_office"/>
+                    </div>
+                    <div t-if="o.date_invoice">
+                      Fecha: <span t-field="o.date_invoice"/>
+                    </div>
+                    <div t-if="o.date_due">
+                      Fecha de Vencimiento: <span t-field="o.date_due"/>
+                    </div>
+                    <div t-if="o.internal_sequence">
+                      Número de factura: <span t-field="o.internal_sequence"/>
+                    </div>
+                    <div t-if="o.user_id">
+                      Vendedor: <span t-field="o.user_id"/>
+                    </div>
+                    <div t-if="o.payment_term_id">
+                      Términos de pago: <span t-field="o.payment_term_id"/>
+                    </div>
+                </div>
+                <div class="col-xs-5 pull-right">
+                    <h4 class="mt0 text-left" style="margin-top:10px !important;">
+                        <strong t-if="o.type in ['out_invoice', 'in_invoice']">Factura </strong>
+                        <strong>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'draft'">borrador</span>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">cancelada</span>
+                            <span t-if="o.type == 'out_refund'">Nota de Crédito</span>
+                            <span t-if="o.type == 'in_refund'">Nota de Débito</span>
+                            <span t-if="o.type == 'in_invoice'">de proveedor</span>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'open' and o.sale_fiscal_type == 'final'">de Consumo</span>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'open' and o.sale_fiscal_type == 'fiscal'">de Crédito fiscal</span>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'open' and o.sale_fiscal_type == 'gov'">Gubernamental</span>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'open' and o.sale_fiscal_type == 'special'">de Regímenes Especiales</span>
+                            <span t-if="o.type == 'out_invoice' and o.state == 'open' and o.sale_fiscal_type == 'unico'">de Único Ingresos</span>
+                        </strong>
+                    </h4>
+                    <div class="pull-left">
+                        <div class="mt0 text-left" t-if="o.number">
+                            NCF: <span t-field="o.number"/>
+                        </div>
+                        <div class="mt0 text-left" t-if="o.type == 'out_invoice' and o.ncf_expiration_date and o.sale_fiscal_type != 'final'">
+                            Valido hasta: <span t-field="o.ncf_expiration_date"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div name="invoice_address" class="row"/>
+                <div name="reference" class="col-xs-2" t-if="o.reference"/>
+            </div>
+            <!-- <div class="clearfix mb8"/> -->
+            <div class="page">
+                <hr style="height: 10px; border: 0; box-shadow: 0 10px 10px -10px #8c8b8b inset;"/>
+                <div class="row col-lg-12" t-if="o.sale_fiscal_type != 'final'">
+                    <div class="text-left">
+                        <strong>RNC CLIENTE: </strong> <span t-field="o.partner_id.vat"/>
+                    </div>
+                    <div class="mt8 text-left">
+                        <strong>NOMBRE O RAZÓN SOCIAL:</strong> <span t-field="o.partner_id.display_name"/>
+                    </div>
+                    <hr style="height: 10px; border: 0; box-shadow: 0 10px 10px -10px #8c8b8b inset;"/>
+                </div>
+
+                <!-- Is there a discount on at least one line? -->
+                <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
+                <t t-set="discount_total" t-value="0.0"/>
+                <t t-set="itbis" t-value="0.0"/>
+                <table class="table table-condensed" name="invoice_line_table">
+                    <thead>
+                        <tr>
+                            <th class="hidden">Documento origen</th>
+                            <th class="text-center">CANTIDAD</th>
+                            <th class="text-left">DESCRIPCIÓN</th>
+                            <th class="text-center" t-if="display_discount">DESC.(%)</th>
+                            <th class="text-right">ITBIS</th>
+                            <th class="text-right">VALOR</th>
+                            <th class="text-right"/>
+                        </tr>
+                    </thead>
+                    <tbody class="invoice_tbody">
+                        <tr t-foreach="o.invoice_line_ids" t-as="l">
+                            <t t-set="discount_total" t-value="discount_total + ((l.price_unit * l.quantity) * (l.discount/100))"/>
+                            <t t-set="itbis" t-value="l.get_itbis_amount(o, l.price_unit, l.discount)"/>
+                            <t t-set="ITBIS_EXENTO" t-value="any([t for t in l.invoice_line_tax_ids if t.amount == 0.0])"/>
+                            <td class="hidden">
+                                <span t-field="l.origin"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-field="l.quantity"/>
+                            </td>
+                            <td class="text-left" name="product_name">
+                                <span t-field="l.name"/>
+                            </td>
+                            <td class="text-center" t-if="display_discount">
+                                <span t-field="l.discount"/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="itbis" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                            </td>
+                            <td class="text-right" id="subtotal">
+                                <span t-field="l.price_subtotal" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                            </td>
+                            <td class="text-right">
+                                <span t-if="ITBIS_EXENTO"><b>E</b></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="clearfix">
+                    <hr style="height: 10px; border: 0; box-shadow: 0 10px 10px -10px #8c8b8b inset;"/>
+                    <div id="total" class="row">
+                        <div class="col-xs-4 pull-right">
+                            <table class="table table-condensed" style="min-width: 250px;max-width: 400px;">
+                                <tr class="border-black" style="border-bottom:1px solid #dddddd;">
+                                    <td><strong>SUBTOTAL</strong></td>
+                                    <td class="text-right">
+                                        <span t-field="o.amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                    </td>
+                                </tr>
+                                <tr class="border-black" style="border-bottom:1px solid #dddddd;" t-if="display_discount">
+                                    <td>
+                                        <strong>DESCUENTO</strong>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="discount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                    </td>
+                                </tr>
+                                <tr class="border-black" style="border-bottom:1px solid #dddddd;">
+                                    <td><strong>ITBIS</strong></td>
+                                    <td class="text-right">
+                                        <span t-field="o.amount_tax" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                    </td>
+                                </tr>
+                                <tr class="border-black">
+                                    <td><strong>TOTAL</strong></td>
+                                    <td class="text-right">
+                                        <span t-field="o.amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="text-muted" style="float: right;">
+                        Original: Cliente<br/>
+                        Copia: Vendedor
+                    </div>
+                </div>
+                <p t-if="o.comment">
+                  <span t-field="o.comment"/>
+                </p>
+                <!-- <p t-if="o.payment_term_id">
+                  <span t-field="o.payment_term_id.note"/>
+                </p> -->
+                <!--<p t-if="o.fiscal_position_id.note">-->
+                <!--    <span t-field="o.fiscal_position_id.note"/>-->
+                <!--</p>-->
+            </div>
+        </xpath>
+    </template>
+</odoo>
