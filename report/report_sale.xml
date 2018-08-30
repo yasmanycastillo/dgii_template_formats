@@ -60,7 +60,7 @@
               <table class="table table-condensed" name="order_line_table">
                 <thead>
                   <tr>
-                    <th class="text-left">CÓDIGO</th>
+                    <!-- <th class="text-left">CÓDIGO</th> -->
                     <th class="text-left">DESCRIPCIÓN</th>
                     <th class="text-center">CANTIDAD</th>
                     <th class="text-right">PRECIO UNITARIO</th>
@@ -75,9 +75,9 @@
                         <t t-set="discount_total" t-value="discount_total + ((l.price_unit * l.product_uom_qty) * (l.discount/100))"/>
                         <t t-set="itbis" t-value="l.get_itbis_amount(doc, l.price_unit, l.discount)"/>
                         <t t-set="ITBIS_EXENTO" t-value="any([t for t in l.tax_id if t.amount == 0.0])"/>
-                        <td class="text-left" name="product_code">
+                        <!-- <td class="text-left" name="product_code">
                           <span t-field="l.product_id.name"/>
-                        </td>
+                        </td> -->
                         <td class="text-left">
                             <span t-field="l.name"/>
                         </td>
