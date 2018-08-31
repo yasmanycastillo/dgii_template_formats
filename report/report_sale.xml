@@ -19,8 +19,8 @@
                     <div t-if="doc.user_id">
                       <strong>Vendedor: </strong><span t-field="doc.user_id"/>
                     </div>
-                    <div t-if="doc.payment_term_id">
-                      <strong>Términos de pago:</strong> <span t-field="doc.payment_term_id"/>
+                    <div name="payment_term" t-if="doc.payment_term_id">
+                        <strong>Términos de pago:</strong> <span t-field="doc.payment_term_id"/>
                     </div>
                     <div t-if="doc.client_order_ref">
                       <strong>Su Referencia:</strong>
