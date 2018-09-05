@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="dgii_template_formats.external_layout_background" inherit_id="web.external_layout_background">
-        <xpath expr="//div[@name='company_address']" position="replace">
-            <div class="pull-left" name="company_address">
-                <div>
-                    <strong t-field="company.partner_id.name"/>
+        <xpath expr="//div[hasclass('o_background_header')]" position="replace">
+            <div class="header o_background_header">
+                <div class="pull-right">
+                    <h3 class="mt0 text-right" t-field="company.report_header"/>
                 </div>
-                <div>
-                    RNC: <span t-field="company.vat"/>
+                <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)" class="pull-left"/>
+                <div class="pull-left company_address">
+                    <div>
+                        <strong t-field="company.partner_id.name"/>
+                    </div>
+                    <div>
+                        RNC: <span t-field="company.vat"/>
+                    </div>
+                    <span t-field="company.partner_id"
+                        t-field-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'/>
                 </div>
-                <span t-field="company.partner_id"
-                    t-field-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'/>
+                <div class="clearfix mb8"/>
             </div>
         </xpath>
         <xpath expr="//div[hasclass('o_background_footer')]" position="replace">
