@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="dgii_template_formats.external_layout_background" inherit_id="web.external_layout_background">
-        <xpath expr="//div[hasclass('company_address')]" position="replace">
-            <div class="pull-left company_address" name="company_address">
+        <xpath expr="//div[@name='company_address']" position="replace">
+            <div class="pull-left" name="company_address">
                 <div>
                     <strong t-field="company.partner_id.name"/>
                 </div>
