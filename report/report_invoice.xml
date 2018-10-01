@@ -23,6 +23,9 @@
                     <div t-if="o.payment_term_id">
                       Términos de pago: <span t-field="o.payment_term_id"/>
                     </div>
+                    <div t-if="o.origin and o.type != 'out_refund'">
+                      Documento origen: <span t-field="o.origin"/>
+                    </div>
                 </div>
                 <div class="col-xs-5 pull-right">
                     <h4 class="mt0 text-left" style="margin-top:10px !important;">
@@ -46,6 +49,9 @@
                         </div>
                         <div class="mt0 text-left" t-if="o.type == 'out_invoice' and o.ncf_expiration_date and o.sale_fiscal_type != 'final'">
                             Valido hasta: <span t-field="o.ncf_expiration_date"/>
+                        </div>
+                        <div class="mt0 text-left" t-if="o.type == 'out_refund'">
+                            NCF Afectado: <span t-field="o.origin"/>
                         </div>
                     </div>
                 </div>
@@ -117,11 +123,12 @@
                     </tbody>
                 </table>
 
-                <div class="clearfix">
-                    <hr style="height: 10px; border: 0; box-shadow: 0 10px 10px -10px #8c8b8b inset;"/>
-                    <div id="total" class="row">
-                        <div class="col-xs-4 pull-right">
-                            <table class="table table-condensed" style="min-width: 250px;max-width: 400px;">
+                <div class="col-xs-12">
+                    <hr/>
+                    <div id="total" class="col-xs-4 pull-right"
+                         style="padding-left:0px; padding-right:0px; page-break-inside: avoid !important;">
+                        <div>
+                            <table class="table table-condensed">
                                 <tr class="border-black" style="border-bottom:1px solid #dddddd;">
                                     <td><strong>SUBTOTAL</strong></td>
                                     <td class="text-right">
@@ -149,19 +156,58 @@
                                     </td>
                                 </tr>
                             </table>
+                            <div class="text-muted pull-right">
+                                Original: Cliente<br/>
+                                Copia: Vendedor
+                            </div>
                         </div>
                     </div>
-                    <div class="text-muted" style="float: right;">
-                        Original: Cliente<br/>
-                        Copia: Vendedor
+                    <!--PAYMENT INFO-->
+                    <t t-set="payments" t-value="json.loads(o.payments_widget)"/>
+                    <div t-if="payments" class="col-xs-7 pull-left"
+                         style="padding-left:0px; padding-right:0px; page-break-inside: avoid !important; border-top:1px solid #dddddd;">
+                         <p t-if="payments">
+                             <strong>Información de Pagos:</strong>
+                         </p>
+                        <table class="table table-condensed">
+                            <thead style="page-break-inside: avoid;">
+                                <tr style="page-break-inside: avoid !important;">
+                                    <th>No.</th>
+                                    <th>Fecha</th>
+                                    <th>Método</th>
+                                    <th>Ref.</th>
+                                    <th class="text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="payments['content']" t-as="p">
+                                    <tr style="page-break-inside: avoid !important;">
+                                        <td>
+                                            <span t-esc="p_index + 1"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="p['date']"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="p['journal_name']"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="p['ref']"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="'{:,.2f} {}'.format(p['amount'], p['currency']) if p['position'] == 'after'
+				else '{} {:,.2f}'.format(p['currency'], p['amount'])"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
                 <p t-if="o.comment">
                   <span t-field="o.comment"/>
                 </p>
-                <!-- <p t-if="o.payment_term_id">
-                  <span t-field="o.payment_term_id.note"/>
-                </p> -->
                 <!--<p t-if="o.fiscal_position_id.note">-->
                 <!--    <span t-field="o.fiscal_position_id.note"/>-->
                 <!--</p>-->
